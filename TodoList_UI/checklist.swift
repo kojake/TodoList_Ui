@@ -8,8 +8,21 @@
 import SwiftUI
 
 struct checklist: View {
+    var name: String = ""
+    @State var check_list: [String: String] = ["": ""]
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack{
+            Text(name).font(.largeTitle).fontWeight(.black)
+            Spacer()
+            List{
+                ForEach(check_list.indices) { index in
+                    ForEach(self.check_list[index]) {one in
+                        Text("\(one.name)")
+                    }
+                }
+            }
+        }
     }
 }
 
