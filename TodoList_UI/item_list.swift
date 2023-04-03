@@ -9,7 +9,7 @@ import SwiftUI
 import Foundation
 
 struct item_list: View {
-    @State var item_list = [String]()
+    @State var item_list = UserDefaults.standard.object(forKey: "item_list_key") as! [String]
     @State private var item_house = ""
     @State var item_add_alert = false
     @State private var shouldShowUsage_view = false
@@ -82,6 +82,7 @@ struct item_list: View {
     /// 行削除処理
     func rowRemove(offsets: IndexSet) {
         item_list.remove(atOffsets: offsets)
+        UserDefaults.standard.set(item_list, forKey: "item_list_key")
     }
 }
 struct ContentView_Previews: PreviewProvider {
