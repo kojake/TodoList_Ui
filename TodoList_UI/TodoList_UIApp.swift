@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+var Garbage_can_list = [String]()
+
 @main
 struct TodoList_UIApp: App {
     var body: some Scene {

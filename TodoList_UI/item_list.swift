@@ -9,15 +9,20 @@ import SwiftUI
 import Foundation
 
 struct item_list: View {
-    @State var item_list = UserDefaults.standard.object(forKey: "item_list_key") as! [String]
+    @State var item_list = [String]()
+//    UserDefaults.standard.object(forKey: "item_list_key") as! [String]
     @State private var item_house = ""
     @State var item_add_alert = false
     @State private var shouldShowUsage_view = false
+    @State private var shouldShowGarbage_can_View = false
     
     var body: some View {
         NavigationView {
             VStack {
                 NavigationLink(destination: Usage_view(), isActive: $shouldShowUsage_view) {
+                    EmptyView()
+                }.navigationBarBackButtonHidden(true)
+                NavigationLink(destination: Garbage_can_View(), isActive: $shouldShowGarbage_can_View) {
                     EmptyView()
                 }.navigationBarBackButtonHidden(true)
                 HStack{
@@ -27,14 +32,21 @@ struct item_list: View {
                     Button(action: {
                         self.item_add_alert.toggle()
                     }){
-                        Circle().foregroundColor(.brown).frame(width:50,height: 50).shadow(radius: 50).overlay(
+                        Circle().foregroundColor(.brown).frame(width:70,height: 70).shadow(radius: 50).overlay(
                             Text("+").fontWeight(.black).font(.title).foregroundColor(.white)
+                        )
+                    }
+                    Button(action: {
+                        shouldShowGarbage_can_View = true
+                    }){
+                        Circle().foregroundColor(.brown).frame(width:70,height: 70).shadow(radius: 50).overlay(
+                            Image(systemName: "trash.fill").foregroundColor(.white).font(.largeTitle)
                         )
                     }
                     Button(action: {
                         shouldShowUsage_view = true
                     }){
-                        Circle().foregroundColor(.brown).frame(width:50,height: 50).shadow(radius: 50).overlay(
+                        Circle().foregroundColor(.brown).frame(width:70,height: 70).shadow(radius: 50).overlay(
                             Text("≡").fontWeight(.black).font(.title).foregroundColor(.white)
                         )
                     }
@@ -83,6 +95,8 @@ struct item_list: View {
     func rowRemove(offsets: IndexSet) {
         item_list.remove(atOffsets: offsets)
         UserDefaults.standard.set(item_list, forKey: "item_list_key")
+        //ゴミ箱に追加する
+        Garbage_can_list.append(offsets)
     }
 }
 struct ContentView_Previews: PreviewProvider {
