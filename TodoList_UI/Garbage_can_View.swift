@@ -10,7 +10,7 @@ import SwiftUI
 
 
 struct Garbage_can_View: View {
-   
+    @State var Garbage_can_list = Garbage_can_list_tentative
     @State var item_list_tentative = UserDefaults.standard.object(forKey: "item_list_key") as! [String]
     
     var body: some View {

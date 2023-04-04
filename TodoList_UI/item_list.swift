@@ -93,10 +93,11 @@ struct item_list: View {
     }
     /// 行削除処理
     func rowRemove(offsets: IndexSet) {
+        //ゴミ箱に追加する
+        Garbage_can_list_tentative += offsets
+        //削除する
         item_list.remove(atOffsets: offsets)
         UserDefaults.standard.set(item_list, forKey: "item_list_key")
-        //ゴミ箱に追加する
-        Garbage_can_list.append(offsets)
     }
 }
 struct ContentView_Previews: PreviewProvider {

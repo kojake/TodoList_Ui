@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-var Garbage_can_list = [String]()
+var Garbage_can_list_tentative = [String]()
 
 @main
 struct TodoList_UIApp: App {
