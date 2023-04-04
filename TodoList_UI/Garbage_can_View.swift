@@ -29,21 +29,13 @@ struct Garbage_can_View: View {
             List{
                 ForEach(0 ..< Garbage_can_list.count, id: \.self) {index in
                     Text(Garbage_can_list[index]).fontWeight(.black).font(.title)
-                }
-                .swipeActions(edge: .trailing) {
-                        Button {
-                            item_list_tentative.append(contentsOf: Garbage_can_list)
-                            rowRemove(offsets: IndexSet())
-                        } label: {
-                            Text("復元")
-                        }
-                        .tint(.blue)
-                    }
+                }.onDelete(perform: rowRemove)
             }
         }
     }
     
     func rowRemove(offsets: IndexSet) {
+        item_list += Garbage_can_list
         Garbage_can_list.remove(atOffsets: offsets)
     }
 }
