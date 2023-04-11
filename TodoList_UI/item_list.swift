@@ -22,9 +22,6 @@ struct item_list: View {
                 NavigationLink(destination: Usage_view(), isActive: $shouldShowUsage_view) {
                     EmptyView()
                 }.navigationBarBackButtonHidden(true)
-                NavigationLink(destination: Garbage_can_View(), isActive: $shouldShowGarbage_can_View) {
-                    EmptyView()
-                }.navigationBarBackButtonHidden(true)
                 HStack{
                     Spacer()
                     Text("TodoList").font(.largeTitle).fontWeight(.black)
@@ -34,13 +31,6 @@ struct item_list: View {
                     }){
                         Circle().foregroundColor(.brown).frame(width:70,height: 70).shadow(radius: 50).overlay(
                             Text("+").fontWeight(.black).font(.title).foregroundColor(.white)
-                        )
-                    }
-                    Button(action: {
-                        shouldShowGarbage_can_View = true
-                    }){
-                        Circle().foregroundColor(.brown).frame(width:70,height: 70).shadow(radius: 50).overlay(
-                            Image(systemName: "trash.fill").foregroundColor(.white).font(.largeTitle)
                         )
                     }
                     Button(action: {
@@ -55,7 +45,7 @@ struct item_list: View {
                 List{
                     ForEach(0 ..< item_list.count, id: \.self){index in
                         Text(item_list[index]).fontWeight(.black).font(.title)
-                    }.onDelete(perform: rowRemove)
+                    }
                 }
                 if item_add_alert {
                     ZStack() {
@@ -93,8 +83,6 @@ struct item_list: View {
     }
     /// 行削除処理
     func rowRemove(offsets: IndexSet) {
-        //ゴミ箱に追加する
-        Garbage_can_list_tentative += item_list
         //削除する
         item_list.remove(atOffsets: offsets)
         UserDefaults.standard.set(item_list, forKey: "item_list_key")
