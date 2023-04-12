@@ -9,8 +9,13 @@ import SwiftUI
 import Foundation
 
 struct item_list: View {
-    @State var item_list = item_list_tentative
-//    UserDefaults.standard.object(forKey: "item_list_key") as! [String]
+    @State var item_list = UserDefaults.standard.array(forKey: "item_list_key")?.compactMap { itemString in
+        let components = (itemString as! String).components(separatedBy: ",")
+        guard components.count == 2 else {
+            return nil
+        }
+        return Item(isChecked: components[0] == "true", name: components[1])
+    } ?? []
     @State private var item_house = ""
     @State var item_add_alert = false
     @State private var shouldShowUsage_view = false
@@ -44,8 +49,16 @@ struct item_list: View {
                 }
                 List{
                     ForEach(0 ..< item_list.count, id: \.self){index in
-                        Text(item_list[index]).fontWeight(.black).font(.title)
+                        HStack {
+                            Image(systemName: item_list[index].isChecked ? "checkmark.square" : "square")
+                                .onTapGesture {
+                                    item_list[index].isChecked.toggle()
+                                    saveitems()
+                                }
+                            Text(item_list[index].name)
+                        }
                     }
+                    .onDelete(perform: rowRemove)
                 }
                 if item_add_alert {
                     ZStack() {
@@ -57,10 +70,8 @@ struct item_list: View {
                             HStack {
                                 Spacer()
                                 Button("追加") {
-                                    //項目を追加する
-                                    item_list.append(item_house)
-                                    //userdefaulst
-                                    UserDefaults.standard.set(item_list, forKey: "item_list_key")
+                                    item_list.append(Item(isChecked: false, name: item_house))
+                                    saveitems()
                                     //項目追加内容をリセットする
                                     item_house = ""
                                     //追加入力画面を閉じる
@@ -81,15 +92,32 @@ struct item_list: View {
             }
         }
     }
+    
     /// 行削除処理
     func rowRemove(offsets: IndexSet) {
         //削除する
         item_list.remove(atOffsets: offsets)
-        UserDefaults.standard.set(item_list, forKey: "item_list_key")
+        saveitems()
+    }
+    func saveitems(){
+        let itemStrings = item_list.map { item in
+            return "\(item.isChecked),\(item.name)"
+        }
+        UserDefaults.standard.set(itemStrings, forKey: "item_list_key")
     }
 }
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         item_list()
+    }
+}
+
+struct Item {
+    var isChecked: Bool
+    var name: String
+    
+    init(_ name: String) {
+        self.isChecked = false
+        self.name = name
     }
 }
