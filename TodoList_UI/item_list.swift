@@ -6,10 +6,9 @@
 //
 
 import SwiftUI
-import Foundation
 
 struct item_list: View {
-    @State var item_list = UserDefaults.standard.array(forKey: "item_list_key") as! [String]
+    @State var item_list = [String]()
     @State private var item_house = ""
     @State var item_add_alert = false
     @State private var shouldShowUsage_view = false
@@ -23,7 +22,11 @@ struct item_list: View {
                 }.navigationBarBackButtonHidden(true)
                 HStack{
                     Spacer()
-                    Text("TodoList").font(.largeTitle).fontWeight(.black)
+                    Text("TodoList").font(.largeTitle).fontWeight(.black).onAppear{
+                        if let items = UserDefaults.standard.object(forKey: "item_list_key") as? [String] {
+                            item_list = items
+                        }
+                    }
                     Spacer()
                     Button(action: {
                         self.item_add_alert.toggle()
@@ -43,7 +46,7 @@ struct item_list: View {
                 }
                 List{
                     ForEach(0 ..< item_list.count, id: \.self){index in
-                        Text(item_list[index])
+                        Text(item_list[index]).fontWeight(.black)
                     }
                     .onDelete(perform: rowRemove)
                 }
@@ -60,6 +63,8 @@ struct item_list: View {
                                     item_list.append(item_house)
                                     //項目追加内容をリセットする
                                     item_house = ""
+                                    //Userdfalurtsに保存する
+                                    UserDefaults.standard.set(item_list, forKey: "item_list_key")
                                     //追加入力画面を閉じる
                                     self.item_add_alert.toggle()
                                 }.font(.title2).fontWeight(.black)
@@ -89,15 +94,5 @@ struct item_list: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         item_list()
-    }
-}
-
-struct Item {
-    var isChecked: Bool
-    var name: String
-    
-    init(_ name: String) {
-        self.isChecked = false
-        self.name = name
     }
 }
