@@ -10,7 +10,6 @@ import Foundation
 
 struct item_list: View {
     @State var item_list = UserDefaults.standard.array(forKey: "item_list_key") as! [String]
-    @State var item_check_mark = [Bool]()
     @State private var item_house = ""
     @State var item_add_alert = false
     @State private var shouldShowUsage_view = false
