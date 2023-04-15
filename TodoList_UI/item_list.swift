@@ -9,13 +9,8 @@ import SwiftUI
 import Foundation
 
 struct item_list: View {
-    @State var item_list = UserDefaults.standard.array(forKey: "item_list_key")?.compactMap { itemString in
-        let components = (itemString as! String).components(separatedBy: ",")
-        guard components.count == 2 else {
-            return nil
-        }
-        return Item(isChecked: components[0] == "true", name: components[1])
-    } ?? []
+    @State var item_list = UserDefaults.standard.array(forKey: "item_list_key") as! [String]
+    @State var item_check_mark = [Bool]()
     @State private var item_house = ""
     @State var item_add_alert = false
     @State private var shouldShowUsage_view = false
@@ -49,14 +44,7 @@ struct item_list: View {
                 }
                 List{
                     ForEach(0 ..< item_list.count, id: \.self){index in
-                        HStack {
-                            Image(systemName: item_list[index].isChecked ? "checkmark.square" : "square")
-                                .onTapGesture {
-                                    item_list[index].isChecked.toggle()
-                                    saveitems()
-                                }
-                            Text(item_list[index].name)
-                        }
+                        Text(item_list[index])
                     }
                     .onDelete(perform: rowRemove)
                 }
@@ -70,8 +58,7 @@ struct item_list: View {
                             HStack {
                                 Spacer()
                                 Button("追加") {
-                                    item_list.append(Item(isChecked: false, name: item_house))
-                                    saveitems()
+                                    item_list.append(item_house)
                                     //項目追加内容をリセットする
                                     item_house = ""
                                     //追加入力画面を閉じる
@@ -97,13 +84,7 @@ struct item_list: View {
     func rowRemove(offsets: IndexSet) {
         //削除する
         item_list.remove(atOffsets: offsets)
-        saveitems()
-    }
-    func saveitems(){
-        let itemStrings = item_list.map { item in
-            return "\(item.isChecked),\(item.name)"
-        }
-        UserDefaults.standard.set(itemStrings, forKey: "item_list_key")
+        UserDefaults.standard.set(item_list, forKey: "item_list_key")
     }
 }
 struct ContentView_Previews: PreviewProvider {
