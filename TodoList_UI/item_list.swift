@@ -23,6 +23,7 @@ struct item_list: View {
                 HStack{
                     Spacer()
                     Text("TodoList").font(.largeTitle).fontWeight(.black).onAppear{
+                        //Userdefaultsにデータがあるなら読み込む
                         if let items = UserDefaults.standard.object(forKey: "item_list_key") as? [String] {
                             item_list = items
                         }
