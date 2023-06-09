@@ -20,17 +20,46 @@ struct item_list: View {
     
     var body: some View {
         NavigationView {
-                    VStack {
-                        NavigationLink(destination: Usage_view(), isActive: $shouldShowUsageView) {
-                            EmptyView()
-                        }.navigationBarBackButtonHidden(true)
-                        HStack{
-                            Spacer()
-                            Text("TodoList").font(.largeTitle).fontWeight(.black).onAppear{
-                                if let data = UserDefaults.standard.data(forKey: "item_list_key"), let items = try? PropertyListDecoder().decode([TodoItem].self, from: data) {
-                                    item_list = items // UserDefaultsから読み込んだ値を代入する
-                                }
+            VStack {
+                NavigationLink(destination: Usage_view(), isActive: $shouldShowUsageView) {
+                    EmptyView()
+                }.navigationBarBackButtonHidden(true)
+                HStack{
+                    Spacer()
+                    Text("TodoList").font(.largeTitle).fontWeight(.black).onAppear{
+                        if let data = UserDefaults.standard.data(forKey: "item_list_key"), let items = try? PropertyListDecoder().decode([TodoItem].self, from: data) {
+                            item_list = items // UserDefaultsから読み込んだ値を代入する
+                        }
+                    }
+                    Spacer()
+                    Button(action: {
+                        shouldShowUsageView = true
+                    }){
+                        Circle().foregroundColor(.brown).frame(width:70,height: 70).shadow(radius: 50).overlay(
+                            Text("≡").fontWeight(.black).font(.title).foregroundColor(.white)
+                        )
+                    }
+                    Spacer()
+                }
+                ZStack{
+                    List{
+                        ForEach(item_list.indices, id: \.self) { index in // indexを追加
+                            let todoItem = item_list[index]
+                            HStack {
+                                Image(systemName: todoItem.isChecked ? "checkmark.square.fill" : "square") // チェック済みの場合はチェックマーク、そうでない場合は四角を表示する
+                                    .foregroundColor(todoItem.isChecked ? .green : .black) // チェック済みの場合は緑色にする
+                                    .onTapGesture {
+                                        item_list[index].isChecked.toggle() // isCheckedプロパティをトグル
+                                        UserDefaults.standard.set(try? PropertyListEncoder().encode(item_list), forKey: "item_list_key") // UserDefaultsに保存
+                                    }
+                                Text(todoItem.name).fontWeight(.black)
                             }
+                        }
+                        .onDelete(perform: rowRemove)
+                    }
+                    VStack{
+                        Spacer()
+                        HStack{
                             Spacer()
                             Button(action: {
                                 self.item_add_alert.toggle()
@@ -39,30 +68,9 @@ struct item_list: View {
                                     Text("+").fontWeight(.black).font(.title).foregroundColor(.white)
                                 )
                             }
-                            Button(action: {
-                                shouldShowUsageView = true
-                            }){
-                                Circle().foregroundColor(.brown).frame(width:70,height: 70).shadow(radius: 50).overlay(
-                                    Text("≡").fontWeight(.black).font(.title).foregroundColor(.white)
-                                )
-                            }
-                            Spacer()
                         }
-                        List{
-                            ForEach(item_list.indices, id: \.self) { index in // indexを追加
-                                let todoItem = item_list[index]
-                                HStack {
-                                    Image(systemName: todoItem.isChecked ? "checkmark.square.fill" : "square") // チェック済みの場合はチェックマーク、そうでない場合は四角を表示する
-                                        .foregroundColor(todoItem.isChecked ? .green : .black) // チェック済みの場合は緑色にする
-                                        .onTapGesture {
-                                            item_list[index].isChecked.toggle() // isCheckedプロパティをトグル
-                                            UserDefaults.standard.set(try? PropertyListEncoder().encode(item_list), forKey: "item_list_key") // UserDefaultsに保存
-                                        }
-                                    Text(todoItem.name).fontWeight(.black)
-                                }
-                            }
-                            .onDelete(perform: rowRemove)
-                        }
+                    }
+                }
                 if item_add_alert {
                     ZStack() {
                         Rectangle()
